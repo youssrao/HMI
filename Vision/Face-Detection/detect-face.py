@@ -1,28 +1,27 @@
-from PIL import Image, ImageDraw
-import face_recognition
+import cv2
 
-# Load image file
-image = face_recognition.load_image_file("klas.jpg")
+# Load the cascade
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
 
-# Find all the faces in the image
-face_locations = face_recognition.face_locations(image)
+# Read the input image
+img = cv2.imread('klas.jpg')
 
-pil_image = Image.fromarray(image)
+# Convert into grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-draw = ImageDraw.Draw(pil_image)
+# Detect faces
+faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
-print("I found {} face(s) in this photograph.".format(len(face_locations)))
+# Draw rectangle around the faces
+for (x, y, w, h) in faces:
+    cv2.rectangle(
+    	img, 
+    	(x, y), 
+    	(x + w, y + h), 
+    	(255, 0, 0),
+    	2)
 
-for face_location in face_locations:
-
-    # Print location of each face
-    top, right, bottom, left = face_location
-    print("A face is located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(top, left, bottom, right))
-
-    #Draw a rectangle around each face
-    face_image = image[top:bottom, left:right]
-    draw.rectangle(((left, top), (right, bottom)), width=8, outline=(255, 0, 0))
-
-del draw
-
-pil_image.show()
+# Display the output
+cv2.imshow('img', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
