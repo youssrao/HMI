@@ -1,27 +1,25 @@
-import cv2
+import cv2 as cv
 
-# Load the cascade
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+# Read image from your local file system
+original_image = cv.imread('klas.jpg')
 
-# Read the input image
-img = cv2.imread('klas.jpg')
+# Convert color image to grayscale for Viola-Jones
+grayscale_image = cv.cvtColor(original_image, cv.COLOR_BGR2GRAY)
 
-# Convert into grayscale
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# Load the classifier and create a cascade object for fac detection
+face_cascade = cv.CascadeClassifier('haarcascade_frontalface_alt.xml')
 
-# Detect faces
-faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+detected_faces = face_cascade.detectMultiScale(grayscale_image)
 
-# Draw rectangle around the faces
-for (x, y, w, h) in faces:
-    cv2.rectangle(
-    	img, 
-    	(x, y), 
-    	(x + w, y + h), 
-    	(255, 0, 0),
-    	2)
+for (column, row, width, height) in detected_faces:
+    cv.rectangle(
+        original_image,
+        (column, row),
+        (column + width, row + height),
+        (0, 255, 0),
+        2
+    )
 
-# Display the output
-cv2.imshow('img', img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+cv.imshow('Image', original_image)
+cv.waitKey(0)
+cv.destroyAllWindows()
